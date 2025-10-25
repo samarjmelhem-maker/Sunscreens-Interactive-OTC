@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunscreen & UV Protection Quiz</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #fed7aa 50%, #fef3c7 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            background: linear-gradient(135deg, #f97316 0%, #eab308 100%);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            color: #1e293b;
+        }
+
+        .title h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .title p {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .question-badge {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .option:hover {
+            border-color: #cbd5e1;
+        }
+
+        .option.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .option.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .option.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .option label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+        }
+
+        .explanation-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #eff6ff;
+            border: 2px solid #bfdbfe;
+            border-radius: 8px;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .explanation-text {
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .button {
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        }
+
+        .button-secondary {
+            background: linear-gradient(135deg, #ea580c 0%, #eab308 100%);
+            color: white;
+        }
+
+        .button-secondary:hover {
+            background: linear-gradient(135deg, #c2410c 0%, #ca8a04 100%);
+        }
+
+        .button-outline {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .button-outline:hover {
+            background: #f8fafc;
+        }
+
+        .results-score {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .score-circle {
+            display: inline-block;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .score-text {
+            font-size: 1.25rem;
+            color: #475569;
+        }
+
+        .review-item {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .review-item.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .review-item.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .review-question {
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .button-group .button {
+            flex: 1;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .review-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .title h1 {
+                font-size: 1.5rem;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">📖</div>
+                <div class="title">
+                    <h1>Sunscreen & UV Protection Quiz</h1>
+                    <p>Test your knowledge on sunscreen science and UV radiation</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="app"></div>
+
+        <div class="footer">
+            <p>Educational material by Dr. Samar J Melhem</p>
+            <p>MSc. MBA. PhD Digital Health and Health Informatics</p>
+        </div>
+    </div>
+
+    <script>
+        const mcqs = [
+  {
+    "id": 1,
+    "question": "Which ultraviolet (UV) band is most responsible for causing sunburn (erythema)?",
+    "options": ["UVA", "UVB", "UVC", "Infrared"],
+    "correct": 1,
+    "explanation": "UVB (280-315 nm) has higher energy and is strongly erythemogenic, causing sunburn and direct DNA damage through pyrimidine dimers. UVA primarily causes photoaging, while UVC is blocked by the ozone layer."
+  },
+  {
+    "id": 2,
+    "question": "Which UV band penetrates deeper into the dermis and contributes primarily to photoaging?",
+    "options": ["UVC", "UVB", "UVA", "All UV bands equally"],
+    "correct": 2,
+    "explanation": "UVA (315-400 nm) penetrates deeply into the skin and is mainly responsible for photoaging, pigment changes, and immune suppression by generating reactive oxygen species (ROS)."
+  },
+  {
+    "id": 3,
+    "question": "What is the primary mechanism of action for chemical (organic) sunscreens?",
+    "options": ["Reflect UV radiation", "Absorb UV radiation and convert it into heat", "Create a physical barrier", "Block all wavelengths of light"],
+    "correct": 1,
+    "explanation": "Chemical sunscreens work by absorbing harmful UV rays and converting the energy into heat, which is then dissipated from the skin."
+  },
+  {
+    "id": 4,
+    "question": "Physical (inorganic) sunscreens protect the skin primarily by:",
+    "options": ["Absorbing UV and converting to heat", "Reflecting and scattering UV radiation", "Penetrating deep into skin layers", "Chemical reactions with skin proteins"],
+    "correct": 1,
+    "explanation": "Physical sunscreens, such as titanium dioxide and zinc oxide, work by creating a barrier that reflects and scatters UV rays away from the skin."
+  },
+  {
+    "id": 5,
+    "question": "Which of the following is the wavelength range for UVB radiation?",
+    "options": ["200-280 nm", "280-315 nm", "315-400 nm", "400-700 nm"],
+    "correct": 1,
+    "explanation": "UVB radiation spans 280-315 nm. UVA is 315-400 nm, UVC is below 280 nm, and 400-700 nm is visible light."
+  },
+  {
+    "id": 6,
+    "question": "What type of DNA damage does UVB radiation primarily cause?",
+    "options": ["Single-strand breaks", "Pyrimidine dimers", "Histone modifications", "Methylation changes"],
+    "correct": 1,
+    "explanation": "UVB directly damages DNA by forming pyrimidine dimers (thymine dimers), leading to mutations if not repaired properly."
+  },
+  {
+    "id": 7,
+    "question": "How does UVA radiation cause indirect damage to skin cells?",
+    "options": ["Direct DNA breaks", "Generation of reactive oxygen species (ROS)", "Protein denaturation", "Lipid synthesis inhibition"],
+    "correct": 1,
+    "explanation": "UVA generates reactive oxygen species (ROS), which damage cell components including DNA, proteins, and lipids, accelerating aging."
+  },
+  {
+    "id": 8,
+    "question": "Which chemical sunscreen agent provides broad-spectrum UVA protection but requires stabilization?",
+    "options": ["Octinoxate", "Avobenzone", "PABA", "Titanium dioxide"],
+    "correct": 1,
+    "explanation": "Avobenzone primarily absorbs UVA radiation, particularly UVA I (>380 nm), but is photounstable and needs stabilizers like Octocrylene to maintain efficacy."
+  },
+  {
+    "id": 9,
+    "question": "What is the primary role of Octocrylene in sunscreen formulations?",
+    "options": ["UVA absorption only", "Photostabilizer and UVB protection", "Moisturizing agent", "Preservative"],
+    "correct": 1,
+    "explanation": "Octocrylene serves as a photostabilizer, helping to maintain the efficacy of other UV filters like Avobenzone, and also provides UVB protection."
+  },
+  {
+    "id": 10,
+    "question": "Which two physical sunscreen ingredients are FDA-approved and commonly used?",
+    "options": ["Avobenzone and Oxybenzone", "Titanium Dioxide and Zinc Oxide", "PABA and Octinoxate", "Octocrylene and Homosalate"],
+    "correct": 1,
+    "explanation": "Titanium Dioxide and Zinc Oxide are FDA-approved physical (inorganic) sunscreen agents that reflect and scatter UV radiation."
+  },
+  {
+    "id": 11,
+    "question": "Why are mineral-based sunscreens recommended for infants and children?",
+    "options": ["Higher SPF values", "Minimal skin penetration and lower irritation risk", "Better water resistance", "Longer shelf life"],
+    "correct": 1,
+    "explanation": "Mineral-based (physical) sunscreens have minimal skin penetration, which contributes to a lower risk of irritation, making them suitable for sensitive skin types including infants and children."
+  },
+  {
+    "id": 12,
+    "question": "What technological advancement has reduced the white cast typically associated with physical sunscreens?",
+    "options": ["Microencapsulation", "Nanoparticle technology", "Liposomal delivery", "Polymer coating"],
+    "correct": 1,
+    "explanation": "Recent advancements in formulation have introduced nanoparticle technology that reduces the visible white cast typically associated with physical sunscreens, enhancing their cosmetic appeal."
+  },
+  {
+    "id": 13,
+    "question": "What does SPF primarily measure?",
+    "options": ["UVA protection", "UVB protection", "Both UVA and UVB equally", "Visible light protection"],
+    "correct": 1,
+    "explanation": "SPF (Sun Protection Factor) primarily measures protection against UVB radiation, which causes sunburn. Broad-spectrum products also protect against UVA."
+  },
+  {
+    "id": 14,
+    "question": "What is the recommended amount of sunscreen for full body coverage?",
+    "options": ["1 teaspoon", "1 tablespoon", "2 mg/cm² (approximately a shot glass)", "Half a shot glass"],
+    "correct": 2,
+    "explanation": "The recommended amount is 2 mg/cm² of sunscreen, which is roughly the amount in a shot glass for full body coverage to achieve the labeled SPF protection."
+  },
+  {
+    "id": 15,
+    "question": "How long before sun exposure should sunscreen be applied?",
+    "options": ["Immediately before", "5-10 minutes before", "15-30 minutes before", "1 hour before"],
+    "correct": 2,
+    "explanation": "Sunscreen should be applied 15-30 minutes before sun exposure to allow proper absorption and film formation on the skin."
+  },
+  {
+    "id": 16,
+    "question": "How frequently should sunscreen be reapplied during prolonged sun exposure?",
+    "options": ["Every hour", "Every 2 hours", "Every 4 hours", "Once daily"],
+    "correct": 1,
+    "explanation": "Sunscreen should be reapplied every 2 hours or immediately after water exposure, sweating, or towel drying to maintain protection."
+  },
+  {
+    "id": 17,
+    "question": "What does 'broad-spectrum' sunscreen protection mean?",
+    "options": ["High SPF only", "Protection against both UVA and UVB", "Water-resistant formula", "Contains physical blockers only"],
+    "correct": 1,
+    "explanation": "Broad-spectrum sunscreens provide protection against both UVA and UVB radiation, offering comprehensive protection against sun damage."
+  },
+  {
+    "id": 18,
+    "question": "Which sunscreen ingredient has been largely replaced due to high allergenic potential and clothing staining?",
+    "options": ["Avobenzone", "PABA (Para-aminobenzoic acid)", "Zinc Oxide", "Octinoxate"],
+    "correct": 1,
+    "explanation": "PABA was one of the first effective UVB absorbers but has a high allergenic potential and stains clothing, so it has been largely replaced by safer alternatives."
+  },
+  {
+    "id": 19,
+    "question": "Which chemical sunscreen ingredients are linked to coral reef damage?",
+    "options": ["Titanium dioxide and zinc oxide", "Oxybenzone and octinoxate", "Avobenzone and octocrylene", "PABA and homosalate"],
+    "correct": 1,
+    "explanation": "Oxybenzone and octinoxate are linked to coral reef damage, prompting regulatory actions and increased demand for reef-safe alternatives."
+  },
+  {
+    "id": 20,
+    "question": "What is the primary advantage of chemical sunscreens over physical sunscreens?",
+    "options": ["No skin penetration", "Better cosmetic elegance and transparency", "Lower cost", "No reapplication needed"],
+    "correct": 1,
+    "explanation": "Chemical sunscreens typically offer better cosmetic elegance, being more transparent and less visible on the skin compared to traditional physical sunscreens."
+  },
+  {
+    "id": 21,
+    "question": "What is MED in sunscreen efficacy testing?",
+    "options": ["Maximum Effective Dose", "Minimal Erythema Dose", "Median Exposure Duration", "Maximal Epidermal Damage"],
+    "correct": 1,
+    "explanation": "MED (Minimal Erythema Dose) is the amount of UV radiation needed to cause minimal redness of the skin, used in in vivo testing to determine SPF."
+  },
+  {
+    "id": 22,
+    "question": "What does PPD measure in sunscreen testing?",
+    "options": ["UVB protection", "UVA protection", "Water resistance", "Photostability"],
+    "correct": 1,
+    "explanation": "PPD (Persistent Pigment Darkening) measures UVA protection by assessing the level of pigmentation that persists after UV exposure."
+  },
+  {
+    "id": 23,
+    "question": "Which antioxidants are commonly added to sunscreen formulations to neutralize ROS?",
+    "options": ["Vitamins A and D", "Vitamins C and E", "Vitamins B and K", "Iron and zinc"],
+    "correct": 1,
+    "explanation": "Vitamins C and E are antioxidants that help neutralize reactive oxygen species (ROS) and improve the overall stability and effectiveness of sunscreen formulations."
+  },
+  {
+    "id": 24,
+    "question": "What is the main disadvantage of Avobenzone when used alone?",
+    "options": ["Poor UVA coverage", "High photounstability", "Strong odor", "Excessive skin penetration"],
+    "correct": 1,
+    "explanation": "Avobenzone is highly photounstable when used alone, meaning it can degrade quickly when exposed to sunlight, reducing its efficacy."
+  },
+  {
+    "id": 25,
+    "question": "Which formulation vehicle is NOT commonly used for sunscreens?",
+    "options": ["Lotion", "Cream", "Gel", "Tablet"],
+    "correct": 3,
+    "explanation": "Sunscreens are topically applied and come in lotions, creams, gels, and sprays. Tablets are not a vehicle for sunscreen application."
+  },
+  {
+    "id": 26,
+    "question": "What role do emulsifiers play in sunscreen formulations?",
+    "options": ["UV absorption", "Mixing oil and water phases", "Increasing SPF", "Providing fragrance"],
+    "correct": 1,
+    "explanation": "Emulsifiers help mix oil and water phases in sunscreen formulations, ensuring even distribution of ingredients and product stability."
+  },
+  {
+    "id": 27,
+    "question": "What is the primary clinical benefit of regular sunscreen use?",
+    "options": ["Vitamin D synthesis", "Reduced incidence of skin cancers and delayed photoaging", "Improved skin hydration", "Enhanced tanning"],
+    "correct": 1,
+    "explanation": "Regular sunscreen use can reduce the incidence of non-melanoma skin cancers and delay photoaging, providing significant long-term skin health benefits."
+  },
+  {
+    "id": 28,
+    "question": "Why is the regulatory approval for sunscreen ingredients more limited in the U.S. compared to Europe and Australia?",
+    "options": ["Lower sun exposure in the U.S.", "More stringent FDA approval process", "Less consumer demand", "Patent restrictions"],
+    "correct": 1,
+    "explanation": "The regulatory approval for sunscreen ingredients in the U.S. is notably more limited compared to regions like Europe and Australia due to the FDA's more stringent approval process."
+  },
+  {
+    "id": 29,
+    "question": "What is a key safety concern regarding Avobenzone?",
+    "options": ["Coral reef toxicity", "Skin penetration and potential cytotoxicity", "Strong allergic reactions", "Clothing stains"],
+    "correct": 1,
+    "explanation": "There are potential safety concerns regarding Avobenzone, including its ability to penetrate the skin and possible cytotoxicity, which warrant further investigation."
+  },
+  {
+    "id": 30,
+    "question": "Which UV radiation type is mostly blocked by the ozone layer?",
+    "options": ["UVA", "UVB", "UVC", "All UV radiation"],
+    "correct": 2,
+    "explanation": "UVC (<280 nm) is mostly blocked by the ozone layer and does not significantly reach the Earth's surface under normal conditions."
+  },
+  {
+    "id": 31,
+    "question": "What is the main mechanism by which both UVA and UVB affect cancer risk?",
+    "options": ["Direct protein damage", "Immune suppression", "Lipid peroxidation", "Vitamin depletion"],
+    "correct": 1,
+    "explanation": "Both UVA and UVB suppress the skin's immune response, potentially increasing cancer risk by reducing the body's ability to detect and eliminate damaged cells."
+  },
+  {
+    "id": 32,
+    "question": "In sunscreen formulation, what are humectants used for?",
+    "options": ["UV absorption", "Moisture retention", "Stabilization", "Fragrance"],
+    "correct": 1,
+    "explanation": "Humectants are additives that help retain moisture in the skin, improving the feel and hydration properties of sunscreen products."
+  },
+  {
+    "id": 33,
+    "question": "What is the purpose of occlusives in sunscreen formulations?",
+    "options": ["Increase SPF", "Prevent water loss from skin", "Enhance UV absorption", "Provide color"],
+    "correct": 1,
+    "explanation": "Occlusives create a barrier on the skin surface to prevent water loss, helping to maintain skin hydration and improve product feel."
+  },
+  {
+    "id": 34,
+    "question": "Which testing method measures how well a sunscreen absorbs UV light in a laboratory setting?",
+    "options": ["In vivo testing", "In vitro testing", "Clinical trials", "Field testing"],
+    "correct": 1,
+    "explanation": "In vitro (lab-based) tests measure how well a sunscreen absorbs UV light without involving human subjects, while in vivo tests are conducted on people."
+  },
+  {
+    "id": 35,
+    "question": "What innovation aims to improve UV filter localization and reduce systemic absorption?",
+    "options": ["Higher SPF values", "Nanoparticles and encapsulation methods", "Increased concentration", "Alcohol-based formulas"],
+    "correct": 1,
+    "explanation": "Nanoparticles and encapsulation methods can improve the localization of UV filters on the skin surface and reduce systemic absorption, enhancing both safety and efficacy."
+  },
+  {
+    "id": 36,
+    "question": "Which characteristic distinguishes chemical sunscreens from physical sunscreens?",
+    "options": ["Chemical sunscreens reflect UV; physical absorb UV", "Chemical sunscreens absorb UV; physical reflect UV", "Both work identically", "Chemical sunscreens only protect against UVA"],
+    "correct": 1,
+    "explanation": "Chemical sunscreens absorb UV radiation and convert it to heat, while physical sunscreens reflect and scatter UV radiation away from the skin."
+  },
+  {
+    "id": 37,
+    "question": "What is a major challenge in sunscreen patient education?",
+    "options": ["Cost of products", "Understanding the difference between SPF and broad-spectrum protection", "Availability", "Shelf life"],
+    "correct": 1,
+    "explanation": "A key challenge is clarifying that SPF mainly measures UVB protection and stressing the importance of broad-spectrum coverage for both UVA and UVB."
+  },
+  {
+    "id": 38,
+    "question": "What integrated approach is recommended for optimal sun protection?",
+    "options": ["Sunscreen only", "Sunscreen combined with protective clothing and seeking shade", "Tanning beds with sunscreen", "Vitamin supplements"],
+    "correct": 1,
+    "explanation": "Sunscreens work best when combined with other protective measures like wearing hats, protective clothing, and seeking shade during peak sun hours."
+  },
+  {
+    "id": 39,
+    "question": "Which property makes physical sunscreens particularly suitable for sensitive skin?",
+    "options": ["High alcohol content", "Minimal skin penetration", "Strong fragrance", "High chemical concentration"],
+    "correct": 1,
+    "explanation": "Physical sunscreens have minimal skin penetration, which contributes to a lower risk of irritation compared to chemical sunscreens, making them suitable for sensitive skin types."
+  },
+  {
+    "id": 40,
+    "question": "What is photostability in the context of sunscreen ingredients?",
+    "options": ["Ability to remain effective under sunlight exposure", "Resistance to water", "Shelf life duration", "Manufacturing stability"],
+    "correct": 0,
+    "explanation": "Photostability refers to the ability of sunscreen ingredients to maintain their protective qualities and not degrade when exposed to sunlight."
+  },
+  {
+    "id": 41,
+    "question": "Which wavelength range does Avobenzone primarily protect against?",
+    "options": ["UVB (280-315 nm)", "UVA II (320-340 nm)", "UVA I (>380 nm)", "UVC (<280 nm)"],
+    "correct": 2,
+    "explanation": "Avobenzone primarily absorbs UVA radiation, particularly UVA I (>380 nm), making it an essential ingredient for effective broad-spectrum sun protection."
+  },
+  {
+    "id": 42,
+    "question": "What is the primary function of thickeners in sunscreen formulations?",
+    "options": ["Increase UV protection", "Control product viscosity and texture", "Preserve the product", "Add fragrance"],
+    "correct": 1,
+    "explanation": "Thickeners control the viscosity and texture of sunscreen products, ensuring proper consistency for application and user experience."
+  },
+  {
+    "id": 43,
+    "question": "Why are 'reef-safe' sunscreen formulations being developed?",
+    "options": ["Better UV protection", "To avoid ingredients harmful to marine ecosystems", "Lower cost", "Improved water resistance"],
+    "correct": 1,
+    "explanation": "Ongoing research aims to develop 'reef-safe' formulations that avoid ingredients like oxybenzone and octinoxate, which are linked to coral reef damage."
+  },
+  {
+    "id": 44,
+    "question": "What consumer trend is driving demand for transparency in sunscreen ingredients?",
+    "options": ["Lower prices", "Increased awareness of skin health and UV protection", "Fashion trends", "Celebrity endorsements"],
+    "correct": 1,
+    "explanation": "As consumers become more aware of skin health and UV protection, they seek transparency about the ingredients in their sunscreens, driving demand for products with approved and safe ingredients."
+  },
+  {
+    "id": 45,
+    "question": "Which UV band has the highest energy and is most damaging to DNA?",
+    "options": ["UVA", "UVB", "UVC", "All are equal"],
+    "correct": 1,
+    "explanation": "UVB has higher energy than UVA and is strongly erythemogenic, causing direct DNA damage. UVC has even higher energy but is blocked by the ozone layer."
+  },
+  {
+    "id": 46,
+    "question": "What is the main reason for combining multiple UV filters in sunscreen formulations?",
+    "options": ["Reduce cost", "Achieve broad-spectrum protection and photostability", "Improve fragrance", "Increase shelf life"],
+    "correct": 1,
+    "explanation": "Many modern products use both chemical and physical UV filters to ensure broad-spectrum protection (UVA and UVB) and improve photostability."
+  },
+  {
+    "id": 47,
+    "question": "Which sunscreen application technique should be emphasized in patient counseling?",
+    "options": ["Apply only to face", "Use minimal amount to avoid waste", "Apply adequate amount (2 mg/cm²) and reapply regularly", "Apply once daily regardless of activity"],
+    "correct": 2,
+    "explanation": "Proper application techniques include using adequate amounts (2 mg/cm²) and reapplying every 2 hours or after water exposure to maintain effective protection."
+  },
+  {
+    "id": 48,
+    "question": "What is the significance of nanoparticle technology in physical sunscreens?",
+    "options": ["Increases SPF dramatically", "Reduces white cast while maintaining efficacy", "Makes them water-resistant", "Allows oral administration"],
+    "correct": 1,
+    "explanation": "Nanoparticle technology reduces the visible white cast typically associated with physical sunscreens while maintaining UV protection, enhancing cosmetic appeal."
+  },
+  {
+    "id": 49,
+    "question": "Which factor does NOT affect sunscreen efficacy after application?",
+    "options": ["Sweating", "Water exposure", "Time elapsed", "User's hair color"],
+    "correct": 3,
+    "explanation": "Sweating, water exposure, and time elapsed all reduce sunscreen efficacy and necessitate reapplication. Hair color does not affect sunscreen performance on skin."
+  },
+  {
+    "id": 50,
+    "question": "What is the primary goal of sunscreen formulation strategies?",
+    "options": ["Maximize profit", "Ensure even application, product stability, and effective UV protection", "Create attractive packaging", "Minimize ingredient count"],
+    "correct": 1,
+    "explanation": "Formulation strategies focus on ensuring even application, product stability, effective UV protection, and good skin compatibility through appropriate vehicles and excipients."
+  }
+];
+
+        let currentQuestion = 0;
+        let answers = [];
+        let selectedOption = null;
+        let showExplanation = false;
+        let quizCompleted = false;
+
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (quizCompleted) {
+                app.innerHTML = renderResults();
+            } else {
+                app.innerHTML = renderQuiz();
+            }
+            
+            attachEventListeners();
+        }
+
+        function renderQuiz() {
+            const progress = ((currentQuestion + 1) / mcqs.length) * 100;
+            const question = mcqs[currentQuestion];
+            
+            return `
+                <div class="card">
+                    <div class="progress-info">
+                        <span>Question ${currentQuestion + 1} of ${mcqs.length}</span>
+                        <span>${Math.round(progress)}% Complete</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="question-badge">Question ${question.id}</div>
+                    <div class="question-text">${question.question}</div>
+                    
+                    <div class="options">
+                        ${question.options.map((option, index) => {
+                            let optionClass = 'option';
+                            let icon = '';
+                            
+                            if (showExplanation) {
+                                if (index === question.correct) {
+                                    optionClass += ' correct';
+                                    icon = '<span class="option-icon">✓</span>';
+                                } else if (index === selectedOption) {
+                                    optionClass += ' incorrect';
+                                    icon = '<span class="option-icon">✗</span>';
+                                }
+                            } else if (selectedOption === index) {
+                                optionClass += ' selected';
+                            }
+                            
+                            return `
+                                <div class="${optionClass}" data-option="${index}">
+                                    <input type="radio" 
+                                           name="answer" 
+                                           id="option-${index}" 
+                                           value="${index}"
+                                           ${selectedOption === index ? 'checked' : ''}
+                                           ${showExplanation ? 'disabled' : ''}>
+                                    <label for="option-${index}">${option}</label>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    ${showExplanation ? `
+                        <div class="explanation-box">
+                            <div class="explanation-title">
+                                📖 Explanation
+                            </div>
+                            <div class="explanation-text">${question.explanation}</div>
+                        </div>
+                    ` : ''}
+
+                    <div style="margin-top: 1.5rem;">
+                        ${!showExplanation ? `
+                            <button class="button button-primary" id="submitBtn">
+                                Submit Answer
+                            </button>
+                        ` : `
+                            <button class="button button-secondary" id="nextBtn">
+                                ${currentQuestion < mcqs.length - 1 ? 'Next Question' : 'View Results'}
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResults() {
+            const score = calculateScore();
+            
+            return `
+                <div class="card">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Quiz Complete! 🎉</h2>
+                    <p style="color: #64748b; margin-bottom: 2rem;">Here's how you performed</p>
+                    
+                    <div class="results-score">
+                        <div class="score-circle">${score.percentage}%</div>
+                        <p class="score-text">
+                            You got <strong style="color: #22c55e;">${score.correct}</strong> out of 
+                            <strong>${score.total}</strong> questions correct
+                        </p>
+                    </div>
+
+                    <h3 style="font-size: 1.125rem; margin-bottom: 1rem;">Question Review:</h3>
+                    <div class="review-list">
+                        ${answers.map(answer => {
+                            const question = mcqs.find(q => q.id === answer.questionId);
+                            return `
+                                <div class="review-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="font-size: 1.25rem;">
+                                            ${answer.isCorrect ? '✓' : '✗'}
+                                        </span>
+                                        <div style="flex: 1;">
+                                            <div class="review-question">Q${question.id}: ${question.question}</div>
+                                            <div class="review-answer">Your answer: ${question.options[answer.selectedOption]}</div>
+                                            ${!answer.isCorrect ? `
+                                                <div class="review-answer" style="color: #22c55e; margin-top: 0.25rem;">
+                                                    Correct answer: ${question.options[question.correct]}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <div class="button-group">
+                        <button class="button button-outline" id="downloadBtn">
+                            📥 Download Results
+                        </button>
+                        <button class="button button-primary" id="restartBtn">
+                            🔄 Restart Quiz
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachEventListeners() {
+            // Option selection
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (!showExplanation) {
+                        selectedOption = parseInt(this.dataset.option);
+                        render();
+                    }
+                });
+            });
+
+            // Submit button
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', handleSubmit);
+            }
+
+            // Next button
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', handleNext);
+            }
+
+            // Restart button
+            const restartBtn = document.getElementById('restartBtn');
+            if (restartBtn) {
+                restartBtn.addEventListener('click', handleRestart);
+            }
+
+            // Download button
+            const downloadBtn = document.getElementById('downloadBtn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', downloadResults);
+            }
+        }
+
+        function handleSubmit() {
+            if (selectedOption === null) {
+                alert('Please select an answer');
+                return;
+            }
+
+            const question = mcqs[currentQuestion];
+            const isCorrect = selectedOption === question.correct;
+
+            answers.push({
+                questionId: question.id,
+                selectedOption: selectedOption,
+                isCorrect: isCorrect
+            });
+
+            showExplanation = true;
+            render();
+        }
+
+        function handleNext() {
+            if (currentQuestion < mcqs.length - 1) {
+                currentQuestion++;
+                selectedOption = null;
+                showExplanation = false;
+                render();
+            } else {
+                quizCompleted = true;
+                render();
+            }
+        }
+
+        function handleRestart() {
+            currentQuestion = 0;
+            answers = [];
+            selectedOption = null;
+            showExplanation = false;
+            quizCompleted = false;
+            render();
+        }
+
+        function calculateScore() {
+            const correct = answers.filter(a => a.isCorrect).length;
+            return {
+                correct: correct,
+                total: answers.length,
+                percentage: Math.round((correct / answers.length) * 100)
+            };
+        }
+
+        function downloadResults() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 15;
+            const maxWidth = pageWidth - (margin * 2);
+            let yPosition = margin;
+
+            function checkPageBreak(requiredSpace) {
+                if (yPosition + requiredSpace > pageHeight - margin) {
+                    pdf.addPage();
+                    yPosition = margin;
+                    return true;
+                }
+                return false;
+            }
+
+            function wrapText(text, maxWidth, fontSize) {
+                pdf.setFontSize(fontSize);
+                return pdf.splitTextToSize(text, maxWidth);
+            }
+
+            // Title
+            pdf.setFontSize(18);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Sunscreen & UV Protection Quiz - Results', margin, yPosition);
+            yPosition += 10;
+
+            // Date and time
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'normal');
+            const now = new Date();
+            pdf.text(`Completed: ${now.toLocaleString()}`, margin, yPosition);
+            yPosition += 8;
+
+            // Score
+            const score = calculateScore();
+            pdf.setFontSize(14);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`Score: ${score.correct}/${score.total} (${score.percentage}%)`, margin, yPosition);
+            yPosition += 12;
+
+            // Line separator
+            pdf.setLineWidth(0.5);
+            pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+            yPosition += 8;
+
+            // Questions and answers
+            answers.forEach((answer, index) => {
+                const question = mcqs.find(q => q.id === answer.questionId);
+                if (!question) return;
+
+                checkPageBreak(40);
+
+                // Question number and status
+                pdf.setFontSize(11);
+                pdf.setFont('helvetica', 'bold');
+                const status = answer.isCorrect ? 'CORRECT' : 'INCORRECT';
+                pdf.text(`Question ${question.id}: ${status}`, margin, yPosition);
+                yPosition += 6;
+
+                // Question text
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+                const questionLines = wrapText(question.question, maxWidth, 10);
+                questionLines.forEach(line => {
+                    checkPageBreak(6);
+                    pdf.text(line, margin, yPosition);
+                    yPosition += 5;
+                });
+                yPosition += 2;
+
+                // Your answer
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Your answer: ', margin, yPosition);
+                pdf.setFont('helvetica', 'normal');
+                const yourAnswerLines = wrapText(question.options[answer.selectedOption], maxWidth - 30, 10);
+                yourAnswerLines.forEach((line, idx) => {
+                    checkPageBreak(6);
+                    pdf.text(line, margin + (idx === 0 ? 28 : 0), yPosition);
+                    if (idx < yourAnswerLines.length - 1) yPosition += 5;
+                });
+                yPosition += 6;
+
+                // Correct answer (if wrong)
+                if (!answer.isCorrect) {
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.text('Correct answer: ', margin, yPosition);
+                    pdf.setFont('helvetica', 'normal');
+                    const correctAnswerLines = wrapText(question.options[question.correct], maxWidth - 30, 10);
+                    correctAnswerLines.forEach((line, idx) => {
+                        checkPageBreak(6);
+                        pdf.text(line, margin + (idx === 0 ? 32 : 0), yPosition);
+                        if (idx < correctAnswerLines.length - 1) yPosition += 5;
+                    });
+                    yPosition += 6;
+                }
+
+                yPosition += 4;
+
+                // Separator line
+                if (index < answers.length - 1) {
+                    checkPageBreak(4);
+                    pdf.setDrawColor(200);
+                    pdf.setLineWidth(0.2);
+                    pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+                    yPosition += 6;
+                }
+            });
+
+            // Footer on last page
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'italic');
+            pdf.setTextColor(128);
+            const footerY = pageHeight - 10;
+            pdf.text('Educational material by Dr. Samar J Melhem', margin, footerY);
+            pdf.text('MSc. MBA. PhD Digital Health and Health Informatics', margin, footerY + 4);
+
+            // Save the PDF
+            pdf.save(`Sunscreen_Quiz_Results_${now.toISOString().split('T')[0]}.pdf`);
+            alert('Results downloaded successfully!');
+        }
+
+        // Initialize the app
+        render();
+    </script>
+</body>
+</html>
